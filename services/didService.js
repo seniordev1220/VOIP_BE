@@ -1,13 +1,21 @@
 const twilioClient = require('../config/twilioConfig');
-exports.purchaseDid = async (phoneNumber) => {
-  try {
-    // Example Twilio API call for purchasing a DID
-    const purchasedNumber = await twilioClient.incomingPhoneNumbers.create({
-      phoneNumber: phoneNumber,
-      // Additional parameters as needed
-    });
-    return purchasedNumber;
-  } catch (error) {
-    throw new Error('Failed to purchase DID: ' + error.message);
-  }
+const telnyxClient = require('../config/telnyxConfig');
+
+exports.purchaseDid = async (data, provider) => {
+    const { phoneNumber } = data;
+    if (provider === 'Twilio') {
+        return await twilioClient.incomingPhoneNumbers.create({ phoneNumber });
+    } else if (provider === 'Telnyx') {
+        return await telnyxClient.phoneNumbers.purchasePhoneNumber({ phoneNumber });
+    }
+    throw new Error('Invalid provider specified');
+};
+
+exports.getDids = async (provider) => {
+    if (provider === 'Twilio') {
+        return await twilioClient.incomingPhoneNumbers.list();
+    } else if (provider === 'Telnyx') {
+        return await telnyxClient.phoneNumbers.listPhoneNumbers();
+    }
+    throw new Error('Invalid provider specified');
 };
