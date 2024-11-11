@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const billingController = require('../controllers/billingController');
+const featureController = require('../controllers/featureController');
 const authMiddleware = require('../middleware/authMiddleware');
 
-router.post('/group', authMiddleware, billingController.createBillingGroup);
+router.post('/forward', authMiddleware, featureController.activateCallForwarding);
 
 module.exports = router;

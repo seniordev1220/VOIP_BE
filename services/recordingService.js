@@ -1,11 +1,12 @@
 const twilioClient = require('../config/twilioConfig');
-exports.enableRecording = async (phoneNumber) => {
-  try {
-    const updatedNumber = await twilioClient.incomingPhoneNumbers(phoneNumber).update({
-      voiceUrl: `https://myapp.com/record-call`,
-    });
-    return updatedNumber;
-  } catch (error) {
-    throw new Error('Failed to enable recording: ' + error.message);
-  }
+const telnyxClient = require('../config/telnyxConfig');
+
+exports.activateRecording = async (data, provider) => {
+    const { callSid } = data;
+    if (provider === 'Twilio') {
+        return await twilioClient.calls(callSid).recordings.create();
+    } else if (provider === 'Telnyx') {
+        return await telnyxClient.calls(callSid).recordings.create();
+    }
+    throw new Error('Invalid provider specified');
 };
